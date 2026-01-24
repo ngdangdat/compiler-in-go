@@ -3,7 +3,7 @@ package lexer
 import (
 	"testing"
 
-	"github.com/compiler-in-go/monkey/token"
+	"compiler-in-go/monkey/token"
 )
 
 func TestNextToken00(t *testing.T) {
@@ -92,12 +92,12 @@ let result = add(five, ten);
 	for i, tt := range tests {
 		tok := l.NextToken()
 		if tok.Type != tt.expectedType {
-			t.Errorf("lexer parsed invalid type at pos %d, want: %s, got: %s",
+			t.Errorf("lexer parsed invalid type at pos %d, want: %s got: %s",
 				i, tt.expectedType, tok.Type,
 			)
 		}
 		if tok.Literal != tt.expectedLiteral {
-			t.Errorf("lexer parsed invalid literal at pos %d, want: %s, got: %s",
+			t.Errorf("lexer parsed invalid literal at pos %d, want: %s got: %s",
 				i, tt.expectedType, tok.Type,
 			)
 		}
