@@ -43,14 +43,12 @@ func Make(op Opcode, operands []int) (Instructions) {
 	instruction[0] = byte(op)
 	offset := 1
 	for i, o := range operands {
-		fmt.Printf("before offset=%d at %d=%d\n", offset, i, o)
 		width := def.OperandWidths[i]
 		switch width {
 		case 2:
 			binary.BigEndian.PutUint16(instruction[offset:], uint16(o))
 		}
 		offset += width
-		fmt.Printf("after offset=%d at %d=%d\n", offset, i, o)
 	}
 	return instruction
 }
