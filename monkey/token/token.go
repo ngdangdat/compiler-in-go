@@ -12,6 +12,16 @@ const (
 
 	ASSIGN = "="
 	PLUS = "+"
+	MINUS = "-"
+	BANG = "!"
+	ASTERISK = "*"
+	SLASH = "/"
+
+	LT = "<"
+	GT = ">"
+	EQ = "=="
+	NEQ = "!="
+
 	COMMA = ","
 	SEMICOLON = ";"
 	LPAREN = "("
@@ -22,6 +32,13 @@ const (
 
 	FUNCTION = "FUNCTION"
 	LET = "LET"
+	IF = "IF"
+	ELSE = "ELSE"
+	RETURN = "RETURN"
+
+	// booleans
+	TRUE = "TRUE"
+	FALSE= "FALSE"
 )
 
 type Token struct {
@@ -32,6 +49,11 @@ type Token struct {
 var keywords = map[string]TokenType {
 	"fn": FUNCTION,
 	"let": LET,
+	"if": IF,
+	"else": ELSE,
+	"true": TRUE,
+	"false": FALSE,
+	"return": RETURN,
 }
 
 // Decide if it's identifier or keyword
