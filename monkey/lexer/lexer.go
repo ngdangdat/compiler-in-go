@@ -10,7 +10,6 @@ type Lexer struct {
 }
 
 func (l *Lexer) NextToken() token.Token {
-	l.readChar()
 	var tok token.Token
 	switch l.ch {
 	case '=':
@@ -30,10 +29,18 @@ func (l *Lexer) NextToken() token.Token {
 	case ';':
 		tok = newToken(token.SEMICOLON, l.ch)
 	default:
-		tok.Type = token.ILLEGAL
-		tok.Literal = ""
+		if isLetter(l.ch) {
+			tok.Literal = l.readIdentifier()
+			return tok
+		}
+		tok = newToken(token.ILLEGAL, l.ch)
 	}
+	l.readChar()
 	return tok
+}
+
+func isLetter(ch byte) bool {
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z'
 }
 
 func newToken(tokType token.TokenType, ch byte) token.Token {
@@ -53,7 +60,16 @@ func (l *Lexer) readChar() {
 	l.readPosition += 1
 }
 
+func (l *Lexer) readIdentifier() string {
+	pos := l.position
+	for isLetter(l.ch) {
+		l.readChar()
+	}
+	return l.input[pos:l.position]
+}
+
 func New(input string) *Lexer {
 	l := &Lexer{input: input}
+	l.readChar()
 	return l
 }
