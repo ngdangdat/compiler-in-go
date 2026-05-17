@@ -1,6 +1,8 @@
 package lexer
 
-import "github.com/ngdangdat/compiler-in-go/monkey/token"
+import (
+	"github.com/ngdangdat/compiler-in-go/monkey/token"
+)
 
 type Lexer struct {
 	input        string
@@ -9,8 +11,15 @@ type Lexer struct {
 	ch           byte
 }
 
+func (l *Lexer) skipWhitespace() {
+	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
+		l.readChar()
+	}
+}
+
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
+	l.skipWhitespace()
 	switch l.ch {
 	case '=':
 		tok = newToken(token.ASSIGN, l.ch)
@@ -28,12 +37,22 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.COMMA, l.ch)
 	case ';':
 		tok = newToken(token.SEMICOLON, l.ch)
+	case 0:
+		tok.Type = token.EOF
+		tok.Literal = ""
 	default:
 		if isLetter(l.ch) {
 			tok.Literal = l.readIdentifier()
+			tok.Type = token.LookupIdent(tok.Literal)
+			return tok
+		} else if isDigit(l.ch) {
+			tok.Type = token.INT
+			tok.Literal = l.readNumber()
+			return tok
+		} else {
+			tok = newToken(token.ILLEGAL, l.ch)
 			return tok
 		}
-		tok = newToken(token.ILLEGAL, l.ch)
 	}
 	l.readChar()
 	return tok
@@ -41,6 +60,10 @@ func (l *Lexer) NextToken() token.Token {
 
 func isLetter(ch byte) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z'
+}
+
+func isDigit(ch byte) bool {
+	return '0' <= ch && ch <= '9'
 }
 
 func newToken(tokType token.TokenType, ch byte) token.Token {
@@ -63,6 +86,14 @@ func (l *Lexer) readChar() {
 func (l *Lexer) readIdentifier() string {
 	pos := l.position
 	for isLetter(l.ch) {
+		l.readChar()
+	}
+	return l.input[pos:l.position]
+}
+
+func (l *Lexer) readNumber() string {
+	pos := l.position
+	for isDigit(l.ch) {
 		l.readChar()
 	}
 	return l.input[pos:l.position]
