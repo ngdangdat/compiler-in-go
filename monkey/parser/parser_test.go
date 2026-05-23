@@ -23,6 +23,7 @@ func TestLetStatements(t *testing.T) {
 	if len(program.Statements) != 3 {
 		t.Fatalf("ParseProgram() invalid number of parsed statements, expected=%d, got=%d", 3, len(program.Statements))
 	}
+	testParserErrors(t, p)
 	tests := []struct{ expectedIdentifier string }{
 		{expectedIdentifier: "x"},
 		{expectedIdentifier: "y"},
@@ -60,4 +61,16 @@ func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
 	}
 
 	return true
+}
+
+func testParserErrors(t *testing.T, p *Parser) {
+	errors := p.Errors()
+	if len(errors) == 0 {
+		return
+	}
+	t.Errorf("parser has %d errors", len(errors))
+	for _, msg := range errors {
+		t.Errorf("parser error: %s", msg)
+	}
+	t.FailNow()
 }
